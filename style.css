@@ -1,0 +1,78 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    min-height: 100vh;
+    background: #ebe2e2;
+}
+
+#expense-form{
+    padding: 30px;
+    background: #d8d2d2;
+    border-radius: 5px;
+    min-width: 600px;
+}
+
+#expense-form h1{
+    text-align: center;
+    margin-bottom: 30px;  
+}
+
+#expense-form label{
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#expense-form input,
+#expense-form select{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+#expense-form input[type="submit"]{
+    background: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+}
+
+#expense-list{
+    margin-top: 30px;
+    list-style: none;
+    padding: 0;
+}
+
+#expense-list li{
+    background: #f1ebeb;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#expense-list li button{
+    background: #b46c6c;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 10px 10px;
+    margin-left: 10px;
+}
