@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 
-const sign_Up = async (req, res) => {
+export const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
         const existingUser = await User.findOne({
@@ -31,4 +31,24 @@ const sign_Up = async (req, res) => {
     }
 };
 
-export default sign_Up;
+
+export const login = async(req,res) =>{
+    const {email, password} = req.body;
+    const user = await User.findOne({
+        where: {email}
+    });
+    if(!user){
+        return res.status(404).json({
+            error: "User not found"
+        });
+    }
+    if(user.password !== password){
+        return res.status(401).json({
+            error: "User not authorized"
+        });
+    }
+    res.status(200).json({
+        message: "Login successful",
+        user
+    });
+}
