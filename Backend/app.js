@@ -4,6 +4,7 @@ import cors from "cors";
 
 import userRoutes from "./routes/authRoutes.js";
 import sequelize from "./config/database.js";
+import expenseRoutes from "./routes/expenseRoutes.js";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/users", userRoutes);
+app.use("/expenses", expenseRoutes);
 
 sequelize.sync()
     .then(() => {

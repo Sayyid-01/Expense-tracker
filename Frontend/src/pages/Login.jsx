@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { login } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [form, setForm] = useState({
@@ -19,12 +20,14 @@ const Login = () => {
         });
     };
 
+    const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             const result = await login(form);
             setMessage(result.message);
+            navigate("/home");
         } catch (error) {
             setMessage("Unable to connect to the server.");
         }
