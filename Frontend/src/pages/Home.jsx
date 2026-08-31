@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Input from "../components/Input";
 import Select from "../components/Select";
-import { addExpense, getExpenses } from "../services/expenseService";
+import { addExpense, getExpenses,deleteExpense } from "../services/expenseService";
 
 const Home = () => {
   const [form, setForm] = useState({
@@ -30,6 +30,15 @@ const Home = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const handleDelete = async (id) => {
+  try {
+    await deleteExpense(id);
+    fetchExpenses();
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -112,6 +121,14 @@ const Home = () => {
                 <td className="border p-2">{expense.amount}</td>
                 <td className="border p-2">{expense.description}</td>
                 <td className="border p-2">{expense.category}</td>
+                <td className="border p-2">
+                  <button
+                    onClick={() => handleDelete(expense.id)}
+                    className="bg-red-600 text-white p-2 rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))
           ) : (

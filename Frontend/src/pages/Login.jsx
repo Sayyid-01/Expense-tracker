@@ -23,9 +23,9 @@ const Login = () => {
     const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const result = await login(form);
+            sessionStorage.setItem("token", result.token);
             setMessage(result.message);
             navigate("/home");
         } catch (error) {
