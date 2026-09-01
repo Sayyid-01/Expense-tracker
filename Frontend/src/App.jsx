@@ -4,9 +4,7 @@ function App() {
   return (
     <>
       <nav>Expense Tracker</nav>
-
       <Outlet />
-
       <footer>© 2026</footer>
     </>
   );

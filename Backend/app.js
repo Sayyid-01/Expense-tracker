@@ -5,6 +5,7 @@ import cors from "cors";
 import userRoutes from "./routes/authRoutes.js";
 import sequelize from "./config/database.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 import "./models/index.js";
 
 dotenv.config();
@@ -18,8 +19,9 @@ app.use(express.json());
 
 app.use("/users", userRoutes);
 app.use("/expenses", expenseRoutes);
+app.use("/payment", paymentRoutes);
 
-sequelize.sync({alter: true})
+sequelize.sync()
     .then(() => {
         console.log("Database Connected");
 

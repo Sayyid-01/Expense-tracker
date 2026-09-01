@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Input from "../components/Input";
 import Select from "../components/Select";
 import { addExpense, getExpenses,deleteExpense } from "../services/expenseService";
+import Navbar from "../components/Navbar";
 
 const Home = () => {
   const [form, setForm] = useState({
@@ -60,6 +61,10 @@ const Home = () => {
 
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-lg shadow">
+      <div className="sticky top-0 z-50">
+            <Navbar />
+      </div>
+      
       <h1 className="text-3xl font-bold text-center mb-6">
         Expense Tracker
       </h1>
@@ -111,6 +116,7 @@ const Home = () => {
             <th className="border p-2">Amount</th>
             <th className="border p-2">Description</th>
             <th className="border p-2">Category</th>
+            <th className="border p-2">Action</th>
           </tr>
         </thead>
 
@@ -121,10 +127,10 @@ const Home = () => {
                 <td className="border p-2">{expense.amount}</td>
                 <td className="border p-2">{expense.description}</td>
                 <td className="border p-2">{expense.category}</td>
-                <td className="border p-2">
+                <td className="border p-2 flex justify-center">
                   <button
                     onClick={() => handleDelete(expense.id)}
-                    className="bg-red-600 text-white p-2 rounded hover:bg-red-700"
+                    className="bg-red-600 text-white p-2 rounded hover:bg-red-700 "
                   >
                     Delete
                   </button>
