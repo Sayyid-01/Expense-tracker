@@ -1,10 +1,17 @@
+
 import { useState, useEffect } from "react";
 import Input from "../components/Input";
 import Select from "../components/Select";
-import { addExpense, getExpenses,deleteExpense } from "../services/expenseService";
-import Navbar from "../components/Navbar";
+import {
+  addExpense,
+  getExpenses,
+  deleteExpense
+} from "../services/expenseService";
+import { load } from "@cashfreepayments/cashfree-js";
 
 const Home = () => {
+  const API = "http://localhost:4000";
+
   const [form, setForm] = useState({
     amount: "",
     description: "",
@@ -12,16 +19,38 @@ const Home = () => {
   });
 
   const [expenses, setExpenses] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchExpenses();
+    checkPremium();
   }, []);
+
   const fetchExpenses = async () => {
     try {
       const data = await getExpenses();
       setExpenses(data);
     } catch (error) {
       console.error("Error fetching expenses:", error);
+    }
+  };
+
+  const checkPremium = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await fetch(`${API}/premium/checkPremium`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setIsPremium(data.isPremium);
+    } catch (error) {
+      console.error("Premium check error:", error);
     }
   };
 
@@ -33,20 +62,20 @@ const Home = () => {
   };
 
   const handleDelete = async (id) => {
-  try {
-    await deleteExpense(id);
-    fetchExpenses();
-  } catch (error) {
-    console.log(error);
-  }
-};
+    try {
+      await deleteExpense(id);
+      fetchExpenses();
+      handleLeaderboard(); 
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       await addExpense(form);
-
       fetchExpenses();
 
       setForm({
@@ -54,45 +83,141 @@ const Home = () => {
         description: "",
         category: "Food",
       });
+      handleLeaderboard();
     } catch (error) {
-      console.error("Error adding expense:", error);
+      console.error("Error on adding expense:", error);
+    }
+  };
+
+
+
+  const handlePremium = async () => {
+    try {
+      setLoading(true);
+
+      // Token is from sessionStorage
+      const token = sessionStorage.getItem("token");
+
+      // Create order in backend
+      const response = await fetch(
+        API + "/payment/create_order",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      // Open Cashfree
+      const cashfree = await load({
+        mode: "sandbox",
+      });
+
+      await cashfree.checkout({
+        paymentSessionId: data.paymentSessionId,
+        redirectTarget: "_modal",
+      });
+
+      // Verify payment
+      const verifyResponse = await fetch(
+        `${API}/payment/verify/${data.orderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const result = await verifyResponse.json();
+
+      if (result.status === "SUCCESSFUL") {
+        alert("Transaction successful");
+
+        // Store  premium status in localStorage
+        localStorage.setItem("isPremium", "true");
+
+        // Refreshinsg UI
+        window.location.reload();
+
+      } else if (result.status === "FAILED") {
+        alert("TRANSACTION FAILED.");
+      }
+
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert("Something went wrong");
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLeaderboard = async () => {
+    try {
+
+      const token = sessionStorage.getItem("token");
+      const response = await fetch(`${API}/premium/showleaderboard`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.message || "Failed to load leaderboard");
+        return;
+      }
+
+      setLeaderboard(data.leaderboard);
+      setShowLeaderboard(true);
+    } catch (error) {
+      console.error("Leaderboard error:", error);
+      alert("Somethng went wrong");
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-lg shadow">
-      <div className="sticky top-0 z-50">
-            <Navbar />
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold ">Expense Tracker</h1>
+        {isPremium ? (
+          <div className="flex items-center justify-between mb-6 p-4 bg-green-50 rounded-lg">
+            <p className="text-green-600 font-semibold pr-3">
+              You are a Premium Member
+            </p>
+
+            <button
+              onClick={handleLeaderboard}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              Show Leaderboard
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between mb-6 p-4 bg-yellow-50 rounded-lg">
+            <button
+              onClick={handlePremium}
+              disabled={loading}
+              className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 disabled:opacity-50"
+            >
+              {loading ? "Process..." : "Buy Premium Membership"}
+            </button>
+          </div>
+        )}
       </div>
-      
-      <h1 className="text-3xl font-bold text-center mb-6">
-        Expense Tracker
-      </h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label="Amount"
-          name="amount"
-          type="number"
-          placeholder="Enter amount"
-          value={form.amount}
-          onChange={handleChange}
-        />
-
-        <Input
-          label="Description"
-          name="description"
-          type="text"
-          placeholder="Enter description"
-          value={form.description}
-          onChange={handleChange}
-        />
-
-        <Select
-          label="Category"
-          name="category"
-          value={form.category}
-          onChange={handleChange}
+        <Input label="Amount" name="amount" type="number" placeholder="Enter amount" value={form.amount} onChange={handleChange} />
+        <Input label="Description" name="description" type="text" placeholder="Enter description" value={form.description} onChange={handleChange} />
+        <Select label="Category" name="category" value={form.category} onChange={handleChange}
           options={[
             "Food",
             "Petrol",
@@ -101,11 +226,7 @@ const Home = () => {
             "Entertainment",
           ]}
         />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
+        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
           Add Expense
         </button>
       </form>
@@ -114,6 +235,7 @@ const Home = () => {
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Amount</th>
+
             <th className="border p-2">Description</th>
             <th className="border p-2">Category</th>
             <th className="border p-2">Action</th>
@@ -130,7 +252,7 @@ const Home = () => {
                 <td className="border p-2 flex justify-center">
                   <button
                     onClick={() => handleDelete(expense.id)}
-                    className="bg-red-600 text-white p-2 rounded hover:bg-red-700 "
+                    className="bg-red-600 text-white p-2 rounded hover:bg-red-700"
                   >
                     Delete
                   </button>
@@ -140,7 +262,7 @@ const Home = () => {
           ) : (
             <tr>
               <td
-                colSpan="3"
+                colSpan="4"
                 className="text-center border p-4 text-gray-500"
               >
                 No expenses found.
@@ -149,8 +271,47 @@ const Home = () => {
           )}
         </tbody>
       </table>
+
+      {showLeaderboard && (
+        <div className="mt-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">Leaderboard</h2>
+          </div>
+
+          <table className="w-full border border-collapse">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border p-2">Rank</th>
+                <th className="border p-2">Name</th>
+                <th className="border p-2">Total Expense</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {leaderboard.length > 0 ? (
+                leaderboard.map((user, index) => (
+                  <tr key={user.userId}>
+                    <td className="border p-2">{index + 1}</td>
+                    <td className="border p-2">{user.name}</td>
+                    <td className="border p-2">₹{user.totalExpense}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="3"
+                    className="text-center border p-4 text-gray-500"
+                  >
+                    No  data available.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
-};
-
+}
+  
 export default Home;

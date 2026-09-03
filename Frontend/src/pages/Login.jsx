@@ -25,9 +25,13 @@ const Login = () => {
         e.preventDefault();
         try {
             const result = await login(form);
-            sessionStorage.setItem("token", result.token);
-            setMessage(result.message);
-            navigate("/home");
+            if (result.message === "Login successful") {
+                sessionStorage.setItem("token", result.token);
+                setMessage(result.message);
+                navigate("/home");
+            } else {
+                setMessage(result.message || "Login failed");
+            }
         } catch (error) {
             setMessage("Unable to connect to the server.");
         }
@@ -42,22 +46,8 @@ const Login = () => {
                 </h1>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
-                    <Input
-                        label="Email"
-                        name="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={form.email}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="Password"
-                        name="password"
-                        type="password"
-                        placeholder="Enter your password"
-                        value={form.password}
-                        onChange={handleChange}
-                    />
+                    <Input label="Email" name="email" type="email" placeholder="Enter your email" value={form.email} onChange={handleChange} />
+                    <Input label="Password" name="password" type="password" placeholder="Enter your password" value={form.password} onChange={handleChange} />  
                     {message && (
                         <p className="text-center text-red-500 font-medium">
                             {message}

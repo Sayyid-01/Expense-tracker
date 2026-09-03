@@ -7,6 +7,7 @@ import sequelize from "./config/database.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import "./models/index.js";
+import premiumRoutes from "./routes/premiumRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use("/users", userRoutes);
 app.use("/expenses", expenseRoutes);
 app.use("/payment", paymentRoutes);
+app.use("/premium", premiumRoutes);
 
 sequelize.sync()
     .then(() => {
