@@ -1,22 +1,24 @@
 import sequelize  from "../config/database.js";
 import User from "../models/User.js";
-
+import Expense from "../models/Expense.js";
 export const showLeaderboard = async (req, res) => {
     try {
-        const [leaderboard] = await sequelize.query(`
-            SELECT
-                users.id AS userId,
-                users.name AS name,
-                SUM(expenses.amount) AS totalExpense
-            FROM expenses 
-            INNER JOIN users 
-                ON expenses.userId = users.id
-            GROUP BY
-                users.id,
-                users.name
-            ORDER BY
-                totalExpense DESC
-        `);
+           const leaderboard = await User.findAll({
+            attributes: [
+                "id",
+                "name",
+                [sequelize.fn("SUM", sequelize.col("expenses.amount")), "totalExpense"],
+            ],
+            include: [
+                {
+                    model: Expense,
+                    attributes: [],
+                    required: false,
+                },
+            ],
+            group: ["User.id"],
+            order: [["totalExpense", "DESC"]],
+        }); 
 
         res.status(200).json({
             success: true,
