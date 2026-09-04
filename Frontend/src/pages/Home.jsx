@@ -159,6 +159,8 @@ const Home = () => {
     }
   };
 
+  
+
   const handleLeaderboard = async () => {
     try {
 
@@ -183,6 +185,8 @@ const Home = () => {
       alert("Somethng went wrong");
     }
   };
+
+
 
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-lg shadow">

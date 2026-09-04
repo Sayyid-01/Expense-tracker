@@ -23,7 +23,7 @@ app.use("/expenses", expenseRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/premium", premiumRoutes);
 
-sequelize.sync()
+sequelize.sync({alter: true})
     .then(() => {
         console.log("Database Connected");
 

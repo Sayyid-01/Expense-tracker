@@ -18,6 +18,10 @@ const User = sequelize.define("user", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  totalExpense: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
 });
 
 export default User;
