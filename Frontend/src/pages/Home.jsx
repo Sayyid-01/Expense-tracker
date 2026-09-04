@@ -23,11 +23,29 @@ const Home = () => {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [aiCategory, setAiCategory] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     fetchExpenses();
     checkPremium();
   }, []);
+
+
+  useEffect(() => {
+    if (form.description.trim()) {
+      const timer = setTimeout(() => {
+        handleAICategorization();
+      }, 700);
+
+      return () => clearTimeout(timer);
+    } else {
+      setAiCategory("");
+      setAiLoading(false);
+    }
+  }, [form.description]);
+
+
 
   const fetchExpenses = async () => {
     try {
@@ -65,7 +83,7 @@ const Home = () => {
     try {
       await deleteExpense(id);
       fetchExpenses();
-      handleLeaderboard(); 
+      handleLeaderboard();
     } catch (error) {
       console.log(error);
     }
@@ -159,7 +177,7 @@ const Home = () => {
     }
   };
 
-  
+
 
   const handleLeaderboard = async () => {
     try {
@@ -186,6 +204,45 @@ const Home = () => {
     }
   };
 
+  const handleAICategorization = async () => {
+    if (!form.description.trim()) {
+      setAiCategory("");
+      return;
+    }
+
+    try {
+      setAiLoading(true);
+
+      const token = sessionStorage.getItem("token");
+      const response = await fetch(`${API}/expenses/categorize`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ description: form.description }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.message || "Failed to categorize expense");
+        return;
+      }
+
+      setAiCategory(data.category);
+
+      setForm((prev) => ({
+        ...prev,
+        category: data.category,
+      }));
+    } catch (error) {
+      console.error("AI server error:", error);
+      alert("Something went wrong");
+    } finally {
+      setAiLoading(false);
+    }
+
+  };
 
 
   return (
@@ -221,15 +278,22 @@ const Home = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input label="Amount" name="amount" type="number" placeholder="Enter amount" value={form.amount} onChange={handleChange} />
         <Input label="Description" name="description" type="text" placeholder="Enter description" value={form.description} onChange={handleChange} />
-        <Select label="Category" name="category" value={form.category} onChange={handleChange}
-          options={[
-            "Food",
-            "Petrol",
-            "Salary",
-            "Shopping",
-            "Entertainment",
-          ]}
-        />
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Category
+          </label>
+          <div className="w-full border rounded px-3 py-2 bg-gray-50">
+            {aiLoading ? (
+              <span className="text-gray-500">Analyzing...</span>
+            ) : aiCategory ? (
+              <span>{aiCategory}</span>
+            ) : (
+              <span className="text-gray-400">
+                Ai will suggested category based on description
+              </span>
+            )}
+          </div>
+        </div>
         <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
           Add Expense
         </button>
@@ -317,5 +381,5 @@ const Home = () => {
     </div>
   );
 }
-  
+
 export default Home;

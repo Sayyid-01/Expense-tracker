@@ -1,5 +1,6 @@
 import Expense from "../models/Expense.js";
 import User from "../models/User.js";
+import { categorizeExpense } from "../services/aiServices.js";
 
 export const addExpense = async (req, res) => {
   try {
@@ -76,5 +77,28 @@ export const deleteExpense = async (req, res) => {
     res.status(500).json({
       error: error.message,
     });
+  }
+};
+
+
+export const categorizeExpenseController = async (req, res) => {
+  try {
+    const { description } = req.body;
+    if (!description) {
+      return res.status(400).json({
+        message: "Description is required",
+      });
+    }
+    const category = await categorizeExpense(description);
+    res.status(200).json({
+      category,
+    });
+  } catch (error) {
+    console.error("AI server error:", error);
+    res.status(500).json({
+      message: "Failed to categorize ",
+      error: error.message,
+    });
+
   }
 };
