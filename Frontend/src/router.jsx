@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import ResetPassword from "./pages/ResetPassword";
+import ExpenseIncomeReport from "./pages/ExpenseIncomeReport";
 
 
 export default createBrowserRouter([
@@ -10,4 +11,5 @@ export default createBrowserRouter([
   { path: "/signup", element: <Signup /> },
   {path: "/home", element: <Home/>},
   {path: "/password/reset_password/:uuid", element: <ResetPassword/>},
+  {path: "/expense-income-report", element: <ExpenseIncomeReport/>}
 ]);

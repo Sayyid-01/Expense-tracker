@@ -2,12 +2,14 @@
 import { useState, useEffect } from "react";
 import Input from "../components/Input";
 import Select from "../components/Select";
+import { useNavigate } from "react-router-dom";
 import {
   addExpense,
   getExpenses,
   deleteExpense
 } from "../services/expenseService";
 import { load } from "@cashfreepayments/cashfree-js";
+import { redirect } from "react-router-dom";
 
 const Home = () => {
   const API = "http://localhost:4000";
@@ -25,11 +27,14 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [aiCategory, setAiCategory] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchExpenses();
     checkPremium();
   }, []);
+
+
 
 
   useEffect(() => {
@@ -245,12 +250,13 @@ const Home = () => {
   };
 
 
+
   return (
-    <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-lg shadow">
-      <div className="flex justify-between items-center mb-6">
+    <div className="w-[90%] justify-around mx-auto mt-2 bg-white p-6 rounded-lg shadow">
+      <div className="flex justify-around items-center mb-6">
         <h1 className="text-3xl font-bold ">Expense Tracker</h1>
         {isPremium ? (
-          <div className="flex items-center justify-between mb-6 p-4 bg-green-50 rounded-lg">
+          <div className="flex items-center justify-between mb-6 p-4 bg-green-50 rounded-lg gap-2">
             <p className="text-green-600 font-semibold pr-3">
               You are a Premium Member
             </p>
@@ -261,7 +267,15 @@ const Home = () => {
             >
               Show Leaderboard
             </button>
+              <button
+              onClick={()=> navigate("/expense-income-report")}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              Show Report
+            </button>
           </div>
+
+          
         ) : (
           <div className="flex items-center justify-between mb-6 p-4 bg-yellow-50 rounded-lg">
             <button
@@ -275,7 +289,7 @@ const Home = () => {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 w-1/2 mx-auto mt-3 border p-8 rounded-2xl shadow bg-gray-50 ">
         <Input label="Amount" name="amount" type="number" placeholder="Enter amount" value={form.amount} onChange={handleChange} />
         <Input label="Description" name="description" type="text" placeholder="Enter description" value={form.description} onChange={handleChange} />
         <div>
@@ -294,12 +308,15 @@ const Home = () => {
             )}
           </div>
         </div>
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+        <div className="flex justify-center">
+            <button type="submit" className="w-1/3 bg-green-600 text-white p-2 rounded hover:bg-green-700">
           Add Expense
         </button>
+        </div>
+        
       </form>
 
-      <table className="w-full mt-8 border border-collapse">
+      <table className="w-1/2 mx-auto mt-8 border border-collapse">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Amount</th>
@@ -341,7 +358,7 @@ const Home = () => {
       </table>
 
       {showLeaderboard && (
-        <div className="mt-8">
+        <div className="mt-8 w-1/2 mx-auto">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Leaderboard</h2>
           </div>
