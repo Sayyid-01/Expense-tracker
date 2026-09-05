@@ -1,26 +1,32 @@
 import Expense from "../models/Expense.js";
 import User from "../models/User.js";
 import { categorizeExpense } from "../services/aiServices.js";
+import sequelize from "../config/database.js";
 
 export const addExpense = async (req, res) => {
+
+  const transaction = await sequelize.transaction();
   try {
 
     const { amount } = req.body;
     const expense = await Expense.create({
       ...req.body,
       userId: req.user.id,
+    }, { transaction
     });
 
-    const user = await User.findByPk(req.user.id);
+    const user = await User.findByPk(req.user.id, { transaction });
     if (!user) {
+      await transaction.rollback();
       return res.status(404).json({
         message: "User not found",
       });
     }
 
-    await user.increment("totalExpense", { by: Number(amount), });
-    await user.reload();
+    await user.increment("totalExpense", { by: Number(amount), transaction });
+    await user.reload({ transaction });
 
+    await transaction.commit();
     res.status(201).json({
       message: "Expense added successfully",
       expense,
@@ -30,6 +36,7 @@ export const addExpense = async (req, res) => {
     res.status(500).json({
       error: error.message,
     });
+    await transaction.rollback();
   }
 };
 
@@ -52,31 +59,39 @@ export const getExpenses = async (req, res) => {
 };
 
 export const deleteExpense = async (req, res) => {
+   const transaction = await sequelize.transaction();
   try {
-    const expense = await Expense.findByPk(req.params.id);
+   
+    const expense = await Expense.findByPk(req.params.id, { transaction });
 
     const deleted = await Expense.destroy({
       where: {
         id: req.params.id,
         userId: req.user.id,
       },
+      transaction
     });
     if (!deleted) {
+      await transaction.rollback();
       return res.status(404).json({
         message: "Expense not found",
       });
     }
-    const user = await User.findByPk(req.user.id);
-    await user.decrement("totalExpense", { by: Number(expense.amount) });
-    await user.reload();
+    const user = await User.findByPk(req.user.id, { transaction });
+    await user.decrement("totalExpense", { by: Number(expense.amount), transaction });
+    await user.reload({ transaction });
+
+    await transaction.commit();
     res.json({
       message: "Expense deleted successfully",
       totalExpense: user.totalExpense,
     });
+    
   } catch (error) {
     res.status(500).json({
       error: error.message,
     });
+    await transaction.rollback();
   }
 };
 
