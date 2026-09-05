@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendForgotPasswordMail } from "../services/emailService.js";
+import ForgotPasswordRequest from "../models/ForgotPasswordRequest.js";
 
 export const signup = async (req, res) => {
   try {
@@ -68,9 +69,37 @@ export const forgotPassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    await sendForgotPasswordMail(user.email);
+    const request = await ForgotPasswordRequest.create({ userId: user.id, isActive: true });
+    const resetLink = `${process.env.FRONTEND_URL}/password/reset_password/${request.id}`;
+    await sendForgotPasswordMail(user.email, resetLink);
     res.status(200).json({ message: "Email sent successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+}
+
+
+
+export const resetPassword = async (req, res) => {
+  try{
+    const {uuid} = req.params;
+    const {password} = req.body;
+    const request = await ForgotPasswordRequest.findOne({where: {id: uuid, isActive: true}});
+    if(!request){
+      return res.status(400).json({message: "Invalid or expired request"});
+    }
+    const user = await User.findOne({where: {id: request.userId}});
+    if(!user){
+      return res.status(404).json({message: "User not found"});
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+    request.isActive = false;
+    await request.save();
+    res.status(200).json({message: "Password reset successful"});
+  }catch(err){
+    res.status(500).json({message: err.message});
+  }
+
 }

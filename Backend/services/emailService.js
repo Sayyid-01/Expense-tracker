@@ -9,7 +9,7 @@ apiKey.apiKey = process.env.SIB_API_KEY;
 
 const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
-export const sendForgotPasswordMail = async (email) => {
+export const sendForgotPasswordMail = async (email, resetLink) => {
     try {
         const sendSmtpEmail = {
             sender: {
@@ -22,7 +22,7 @@ export const sendForgotPasswordMail = async (email) => {
                 },
             ],
             subject: "Password Reset Request",
-            textContent: "Your password reset request was received."
+            textContent: `Your password reset request was received. Click the link to reset your password: ${resetLink}`
         };
         await apiInstance.sendTransacEmail(sendSmtpEmail);
         return true;
