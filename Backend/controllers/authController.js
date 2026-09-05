@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sendForgotPasswordMail } from "../services/emailService.js";
 
 export const signup = async (req, res) => {
   try {
@@ -58,3 +59,18 @@ export const login = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ where: { email } } );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    await sendForgotPasswordMail(user.email);
+    res.status(200).json({ message: "Email sent successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}

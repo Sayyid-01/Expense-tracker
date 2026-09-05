@@ -4,6 +4,8 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import { login } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import ForgotPassword from "../components/ForgotPassword";
+import axios from "axios";
 
 const Login = () => {
     const [form, setForm] = useState({
@@ -11,8 +13,9 @@ const Login = () => {
         password: "",
     });
 
-    const [message, setMessage] = useState("");
 
+    const [message, setMessage] = useState("");
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
     const handleChange = (e) => {
         setForm({
             ...form,
@@ -47,7 +50,7 @@ const Login = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <Input label="Email" name="email" type="email" placeholder="Enter your email" value={form.email} onChange={handleChange} />
-                    <Input label="Password" name="password" type="password" placeholder="Enter your password" value={form.password} onChange={handleChange} />  
+                    <Input label="Password" name="password" type="password" placeholder="Enter your password" value={form.password} onChange={handleChange} />
                     {message && (
                         <p className="text-center text-red-500 font-medium">
                             {message}
@@ -62,9 +65,16 @@ const Login = () => {
                         Signup
                     </Link>
                 </p>
+                <button type="button" onClick={() => setShowForgotPassword(true)} className="text-sm w-full cursor-pointer text-blue-600 hover:underline pointer mt-2 justify-center flex">
+                    Forgot Password?
+                </button>
 
             </div>
+            <div className="flex items-center justify-center">{showForgotPassword && ( <ForgotPassword onClose={() => setShowForgotPassword(false)}/>)}</div>
+            
         </div>
+
+        
     );
 };
 
