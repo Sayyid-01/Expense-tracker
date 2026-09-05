@@ -9,7 +9,7 @@ import {
   deleteExpense
 } from "../services/expenseService";
 import { load } from "@cashfreepayments/cashfree-js";
-import { redirect } from "react-router-dom";
+import { FcPrevious, FcNext } from "react-icons/fc";
 
 const Home = () => {
   const API = "http://localhost:4000";
@@ -28,6 +28,8 @@ const Home = () => {
   const [aiCategory, setAiCategory] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     fetchExpenses();
@@ -35,7 +37,9 @@ const Home = () => {
   }, []);
 
 
-
+  useEffect(() => {
+    fetchExpenses();
+  }, [page]);
 
   useEffect(() => {
     if (form.description.trim()) {
@@ -54,8 +58,9 @@ const Home = () => {
 
   const fetchExpenses = async () => {
     try {
-      const data = await getExpenses();
-      setExpenses(data);
+      const data = await getExpenses(page);
+      setExpenses(data.expenses);
+      setTotalPages(data.totalPages);
     } catch (error) {
       console.error("Error fetching expenses:", error);
     }
@@ -267,15 +272,15 @@ const Home = () => {
             >
               Show Leaderboard
             </button>
-              <button
-              onClick={()=> navigate("/expense-income-report")}
+            <button
+              onClick={() => navigate("/expense-income-report")}
               className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
             >
               Show Report
             </button>
           </div>
 
-          
+
         ) : (
           <div className="flex items-center justify-between mb-6 p-4 bg-yellow-50 rounded-lg">
             <button
@@ -309,11 +314,11 @@ const Home = () => {
           </div>
         </div>
         <div className="flex justify-center">
-            <button type="submit" className="w-1/3 bg-green-600 text-white p-2 rounded hover:bg-green-700">
-          Add Expense
-        </button>
+          <button type="submit" className="w-1/3 bg-green-600 text-white p-2 rounded hover:bg-green-700">
+            Add Expense
+          </button>
         </div>
-        
+
       </form>
 
       <table className="w-1/2 mx-auto mt-8 border border-collapse">
@@ -356,6 +361,30 @@ const Home = () => {
           )}
         </tbody>
       </table>
+
+      <div className="flex justify-center mt-4 gap-3">
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+          className="bg-gray-300 text-gray-700 p-2 rounded disabled:opacity-30"
+        >
+           <FcPrevious />
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button onClick={() => setPage(index + 1)}className={`border px-3 py-1 rounded ${page === index + 1 ? "bg-gray-200 font-bold" : ""
+              }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          onClick={() => setPage(page + 1)}
+          disabled={page === totalPages}
+          className="bg-gray-300 text-gray-700 p-2 rounded disabled:opacity-50"
+        >
+          <FcNext />
+        </button>
+      </div>
 
       {showLeaderboard && (
         <div className="mt-8 w-1/2 mx-auto">
