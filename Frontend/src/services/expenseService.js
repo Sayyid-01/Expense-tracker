@@ -1,5 +1,5 @@
 import axios from "axios";
-const API = "http://localhost:4000/expenses";
+const API = `${import.meta.env.VITE_BACKEND_API}/expenses`;
 
 export const getExpenses = async (page = 1, limit = 10) => {
   const token = sessionStorage.getItem("token");

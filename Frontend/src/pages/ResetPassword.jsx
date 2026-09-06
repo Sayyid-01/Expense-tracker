@@ -18,7 +18,7 @@ const ResetPassword = () => {
     }
     try {
       const uuid = window.location.pathname.split("/").pop();
-      await axios.post(`http://localhost:4000/users/password/reset_password/${uuid}`, { password });
+      await axios.post(`${import.meta.env.VITE_BACKEND_API}/users/password/reset_password/${uuid}`, { password });
       alert("Password reset successful. Please log in with your new password.");
       navigate("/");
     } catch (err) {

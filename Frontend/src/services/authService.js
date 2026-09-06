@@ -1,7 +1,6 @@
-const API = "http://localhost:4000/users";
 
 export const signup = async (data) => {
-  const response = await fetch(`${API}/signup`, {
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/users/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,7 +12,7 @@ export const signup = async (data) => {
 };
 
 export const login = async (data) => {
-  const response = await fetch(`${API}/login`, {
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/users/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

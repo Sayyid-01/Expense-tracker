@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+
 const ForgotPassword = ({ onClose }) => {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
@@ -15,7 +16,7 @@ const [message, setMessage] = useState("");
             setLoading(true);
             setMessage("");
             const response = await axios.post(
-                "http://localhost:4000/users/password/forgot_password",
+                "${import.meta.env.VITE_BACKEND_URL}/users/password/forgot_password",
                 { email }
             );
 

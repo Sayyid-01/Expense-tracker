@@ -1,8 +1,7 @@
 
 import { useState, useEffect } from "react";
 import Input from "../components/Input";
-import Select from "../components/Select";
-import { useNavigate } from "react-router-dom";
+import { Meta, useNavigate } from "react-router-dom";
 import {
   addExpense,
   getExpenses,
@@ -12,7 +11,7 @@ import { load } from "@cashfreepayments/cashfree-js";
 import { FcPrevious, FcNext } from "react-icons/fc";
 
 const Home = () => {
-  const API = "http://localhost:4000";
+  const API =import.meta.env.VITE_BACKEND_API;
 
   const [form, setForm] = useState({
     amount: "",
@@ -63,8 +62,8 @@ const Home = () => {
     try {
       const data = await getExpenses(page, limit);
 
-      setExpenses(data.expenses);
-      setTotalPages(data.totalPages);
+      setExpenses(data.expenses || []);
+      setTotalPages(data.totalPages );
       setTotalExpenses(data.totalExpenses);
       localStorage.setItem("Limits", limit);
     } catch (error) {
@@ -384,7 +383,7 @@ const Home = () => {
         </thead>
 
         <tbody>
-          {expenses.length > 0 ? (
+          {expenses.length > 0  ? (
             expenses.map((expense) => (
               <tr key={expense.id}>
                 <td className="border p-2">{expense.amount}</td>
