@@ -6,7 +6,7 @@ import userRoutes from "./routes/authRoutes.js";
 import sequelize from "./config/database.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
-import "./models/index.js";
+import "./models/index1.js";
 import premiumRoutes from "./routes/premiumRoutes.js";
 
 dotenv.config();

@@ -18,6 +18,7 @@ const Home = () => {
     amount: "",
     description: "",
     category: "Food",
+    note: "",
   });
 
   const [expenses, setExpenses] = useState([]);
@@ -115,6 +116,7 @@ const Home = () => {
         amount: "",
         description: "",
         category: "Food",
+        note: "",
       });
       handleLeaderboard();
     } catch (error) {
@@ -302,6 +304,7 @@ const Home = () => {
       <form onSubmit={handleSubmit} className="space-y-4 w-1/2 mx-auto mt-3 border p-8 rounded-2xl shadow bg-gray-50 ">
         <Input label="Amount" name="amount" type="number" placeholder="Enter amount" value={form.amount} onChange={handleChange} />
         <Input label="Description" name="description" type="text" placeholder="Enter description" value={form.description} onChange={handleChange} />
+        <Input label="Note" name="note" type="text" placeholder="Enter note" value={form.note} onChange={handleChange} />
         <div>
           <label className="block text-sm font-medium mb-1">
             Category
@@ -375,6 +378,8 @@ const Home = () => {
             <th className="border p-2">Description</th>
             <th className="border p-2">Category</th>
             <th className="border p-2">Action</th>
+
+            <th className="border p-2">Note</th>
           </tr>
         </thead>
 
@@ -393,6 +398,7 @@ const Home = () => {
                     Delete
                   </button>
                 </td>
+                <td className="border p-2">{expense.note}</td>
               </tr>
             ))
           ) : (
