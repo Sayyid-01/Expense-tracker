@@ -30,6 +30,8 @@ const Home = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [limit, setLimit] = useState(parseInt(localStorage.getItem("Limits")) || 10);
+  const [totalExpenses, setTotalExpenses] = useState(0);
 
   useEffect(() => {
     fetchExpenses();
@@ -39,7 +41,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, [page]);
+  }, [page, limit]);
 
   useEffect(() => {
     if (form.description.trim()) {
@@ -58,9 +60,12 @@ const Home = () => {
 
   const fetchExpenses = async () => {
     try {
-      const data = await getExpenses(page);
+      const data = await getExpenses(page, limit);
+
       setExpenses(data.expenses);
       setTotalPages(data.totalPages);
+      setTotalExpenses(data.totalExpenses);
+      localStorage.setItem("Limits", limit);
     } catch (error) {
       console.error("Error fetching expenses:", error);
     }
@@ -321,6 +326,47 @@ const Home = () => {
 
       </form>
 
+
+
+      <div className="flex w-1/2 justify-between gap-3 m-auto mt-7">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setPage(page - 1)}
+            disabled={page === 1}
+            className="bg-gray-300 text-gray-700 p-2 rounded disabled:opacity-30"
+          >
+            <FcPrevious />
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button onClick={() => setPage(index + 1)} className={`border px-3 py-1 rounded ${page === index + 1 ? "bg-gray-200 font-bold" : ""
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => setPage(page + 1)}
+            disabled={page === totalPages}
+            className="bg-gray-300 text-gray-700 p-2 rounded disabled:opacity-50"
+          >
+            <FcNext />
+          </button>
+        </div>
+
+
+        <div className="flex items-center">
+          <label className="mr-2">Items per page:</label>
+          <select value={limit} onChange={(e) => setLimit(parseInt(e.target.value))} className="border rounded px-2 py-1" >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+          <p className="ml-4">{(page - 1) * limit + 1}-{Math.min(page * limit, totalExpenses)} of {totalExpenses}</p>
+        </div>
+
+      </div>
+
       <table className="w-1/2 mx-auto mt-8 border border-collapse">
         <thead>
           <tr className="bg-gray-200">
@@ -361,30 +407,6 @@ const Home = () => {
           )}
         </tbody>
       </table>
-
-      <div className="flex justify-center mt-4 gap-3">
-        <button
-          onClick={() => setPage(page - 1)}
-          disabled={page === 1}
-          className="bg-gray-300 text-gray-700 p-2 rounded disabled:opacity-30"
-        >
-           <FcPrevious />
-        </button>
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button onClick={() => setPage(index + 1)}className={`border px-3 py-1 rounded ${page === index + 1 ? "bg-gray-200 font-bold" : ""
-              }`}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button
-          onClick={() => setPage(page + 1)}
-          disabled={page === totalPages}
-          className="bg-gray-300 text-gray-700 p-2 rounded disabled:opacity-50"
-        >
-          <FcNext />
-        </button>
-      </div>
 
       {showLeaderboard && (
         <div className="mt-8 w-1/2 mx-auto">

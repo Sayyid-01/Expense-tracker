@@ -1,9 +1,9 @@
 import axios from "axios";
 const API = "http://localhost:4000/expenses";
 
-export const getExpenses = async (page = 1) => {
+export const getExpenses = async (page = 1, limit = 10) => {
   const token = sessionStorage.getItem("token");
-  const response = await axios.get(`${API}?page=${page}`, {
+  const response = await axios.get(`${API}?page=${page}&limit=${limit}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
