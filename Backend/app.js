@@ -8,19 +8,21 @@ import expenseRoutes from "./routes/expenseRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import "./models/index1.js";
 import premiumRoutes from "./routes/premiumRoutes.js";
-import helmet from "helmet";
-import compression from "compression";
+import morgan from "morgan";
+import fs from "fs";
 
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const accessLogStream = fs.createWriteStream("access.log", { flags: "a" }); 
+
+
 
 app.use(cors());
 app.use(express.json());
-app.use(helmet());
-app.use(compression());
+app.use(morgan("combined", { stream: accessLogStream }));
 
 app.use("/users", userRoutes);
 app.use("/expenses", expenseRoutes);
