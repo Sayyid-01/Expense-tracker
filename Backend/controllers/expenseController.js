@@ -2,6 +2,7 @@ import Expense from "../models/Expense.js";
 import User from "../models/User.js";
 import { categorizeExpense } from "../services/aiServices.js";
 import sequelize from "../config/database.js";
+import AWS from "aws-sdk";
 
 export const addExpense = async (req, res) => {
 
@@ -129,3 +130,33 @@ export const categorizeExpenseController = async (req, res) => {
 
   }
 };
+
+function uploadToS3(fileContent, filename) {
+  const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  });
+  const params = {
+    Bucket: BUCKET_NAME,
+    Key: filename,
+    Body: fileContent,
+  };
+  return s3.getSignedUrl("putObject", params);
+}
+
+export const downloadExpenseReport = async (req, res) =>{
+  try{
+    const expenses = await getExpenses();
+    const stringifiedExpenses = JSON.stringify(expenses.expenses);
+    const filename = "ExpenseReport.txt";
+    const fileUrl = uploadToS3(stringifiedExpenses, filename);
+    res.status(200).json({
+      fileUrl,
+    });
+
+  }catch{
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+}
