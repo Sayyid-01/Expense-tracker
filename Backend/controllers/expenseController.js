@@ -8,7 +8,6 @@ export const addExpense = async (req, res) => {
 
   const transaction = await sequelize.transaction();
   try {
-
     const { amount } = req.body;
     const expense = await Expense.create({
       ...req.body,
@@ -131,30 +130,33 @@ export const categorizeExpenseController = async (req, res) => {
   }
 };
 
-function uploadToS3(fileContent, filename) {
+async function  uploadToS3(fileContent, filename) {
   const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   });
   const params = {
-    Bucket: BUCKET_NAME,
+    Bucket: process.env.BUCKET_NAME,
     Key: filename,
     Body: fileContent,
+    ACL: "public-read"
   };
-  return s3.getSignedUrl("putObject", params);
+  const s3res = await s3.upload(params).promise();
+  return s3res.Location;
 }
 
 export const downloadExpenseReport = async (req, res) =>{
   try{
-    const expenses = await getExpenses();
-    const stringifiedExpenses = JSON.stringify(expenses.expenses);
-    const filename = "ExpenseReport.txt";
-    const fileUrl = uploadToS3(stringifiedExpenses, filename);
+     const userId = req.user.id;
+    const {expenses, type} = req.query;
+    const stringifiedExpenses = JSON.stringify(expenses);
+    const filename = `ExpenseReport${userId}${Date.now()}${type}.txt`;
+    const fileUrl = await uploadToS3(stringifiedExpenses, filename);
     res.status(200).json({
       fileUrl,
     });
 
-  }catch{
+  }catch(error){
     res.status(500).json({
       error: error.message,
     });

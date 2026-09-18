@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getExpenses } from "../services/expenseService";
 import { data } from "react-router-dom";
+import axios from "axios";
 
 const ExpenseIncomeReport = () => {
     const [expenses, setExpenses] = useState([]);
@@ -52,6 +53,23 @@ const ExpenseIncomeReport = () => {
         setTotalExpense(totalExpense);
     }, [type, expenses]);
 
+    const downloadExpenseReport = async() => {
+        const token = sessionStorage.getItem("token");
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/expenses/download`, 
+            {
+                params: {
+                    expenses: JSON.stringify(filteredExpenses),
+                    type: type
+                },
+                headers: {
+                    "Content-Type": "application/JSON",
+                    "Authorization": `Bearer ${token}`,
+                },
+            }
+        )
+        window.open(res.data.fileUrl, "_blank");
+    }
+
 
     return (
         <div className="w-2/3 mx-auto mt-20 p-8 border rounded shadow bg-gray-50">
@@ -60,15 +78,15 @@ const ExpenseIncomeReport = () => {
             </h2>
 
             <div className="flex justify-center gap-2 mb-6">
-                <button onClick={() => setType("daily")} className={`px-4 py-2 border rounded ${ type === "daily" ? "bg-gray-400" : "bg-white" }`}>
+                <button onClick={() => setType("daily")} className={`px-4 py-2 border rounded ${type === "daily" ? "bg-gray-400" : "bg-white"}`}>
                     Daily
                 </button>
 
-                <button onClick={() => setType("weekly")} className={`px-4 py-2 border rounded ${ type === "weekly" ? "bg-gray-400" : "bg-white" }`} >
+                <button onClick={() => setType("weekly")} className={`px-4 py-2 border rounded ${type === "weekly" ? "bg-gray-400" : "bg-white"}`} >
                     Weekly
                 </button>
 
-                <button onClick={() => setType("monthly")} className={`px-4 py-2 border rounded ${ type === "monthly" ? "bg-gray-400" : "bg-white"}`}>
+                <button onClick={() => setType("monthly")} className={`px-4 py-2 border rounded ${type === "monthly" ? "bg-gray-400" : "bg-white"}`}>
                     Monthly
                 </button>
             </div>
@@ -130,10 +148,10 @@ const ExpenseIncomeReport = () => {
             </table>
 
             <div className="flex justify-center mt-6">
-                <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Download Report</button>
+                <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={() => downloadExpenseReport()}>Download Report</button>
             </div>
         </div>
-        
+
     );
 };
 

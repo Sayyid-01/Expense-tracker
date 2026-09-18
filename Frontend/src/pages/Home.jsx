@@ -264,6 +264,10 @@ const Home = () => {
 
   return (
     <div className="w-[90%] justify-around mx-auto mt-2 bg-white p-6 rounded-lg shadow">
+
+      {/* // =========== heading and the premium button ============== // */}
+
+
       <div className="flex justify-around items-center mb-6">
         <h1 className="text-3xl font-bold ">Expense Tracker</h1>
         {isPremium ? (
@@ -300,7 +304,8 @@ const Home = () => {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 w-1/2 mx-auto mt-3 border p-8 rounded-2xl shadow bg-gray-50 ">
+      <div className="flex justify-between gap-4">
+      <form onSubmit={handleSubmit} className="space-y-4 w-1/3 mt-3 border p-8 rounded-2xl shadow bg-gray-50 ">
         <Input label="Amount" name="amount" type="number" placeholder="Enter amount" value={form.amount} onChange={handleChange} />
         <Input label="Description" name="description" type="text" placeholder="Enter description" value={form.description} onChange={handleChange} />
         <Input label="Note" name="note" type="text" placeholder="Enter note" value={form.note} onChange={handleChange} />
@@ -329,8 +334,8 @@ const Home = () => {
       </form>
 
 
-
-      <div className="flex w-1/2 justify-between gap-3 m-auto mt-7">
+      <div className="w-2/4">
+        <div className="flex  justify-between gap-3 m-auto mt-7">
         <div className="flex gap-2">
           <button
             onClick={() => setPage(page - 1)}
@@ -369,7 +374,7 @@ const Home = () => {
 
       </div>
 
-      <table className="w-1/2 mx-auto mt-8 border border-collapse">
+      <table className="w-full mx-auto mt-8 border border-collapse ">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Amount</th>
@@ -412,6 +417,12 @@ const Home = () => {
           )}
         </tbody>
       </table>
+      </div>
+
+      </div>
+        {/* // =================== expense form ================ // */}
+      
+      
 
       {showLeaderboard && (
         <div className="mt-8 w-1/2 mx-auto">
