@@ -18,8 +18,6 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const accessLogStream = fs.createWriteStream("access.log", { flags: "a" }); 
 
-//just chcking the jenkins
-console.log("Server started");
 
 
 
