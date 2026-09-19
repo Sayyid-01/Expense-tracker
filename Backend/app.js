@@ -20,6 +20,9 @@ const accessLogStream = fs.createWriteStream("access.log", { flags: "a" });
 
 
 
+console.log("Automation checking");
+console.log("Jenkins Checking");
+
 
 app.use(cors());
 app.use(express.json());
