@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import { categorizeExpense } from "../services/aiServices.js";
 import sequelize from "../config/database.js";
 import AWS from "aws-sdk";
+import {ExpenseReport} from "../models/index1.js";
 
 export const addExpense = async (req, res) => {
 
@@ -59,8 +60,7 @@ export const getExpenses = async (req, res) => {
       expenses,
       totalPages: Math.ceil(count / limit),
       
-      currentPage: page,
-  
+      currentPage: page, 
       totalExpenses: count,
     });
   } catch (error) {
@@ -75,7 +75,6 @@ export const deleteExpense = async (req, res) => {
   try {
    
     const expense = await Expense.findByPk(req.params.id, { transaction });
-
     const deleted = await Expense.destroy({
       where: {
         id: req.params.id,
@@ -152,8 +151,16 @@ export const downloadExpenseReport = async (req, res) =>{
     const stringifiedExpenses = JSON.stringify(expenses);
     const filename = `ExpenseReport${userId}${Date.now()}${type}.txt`;
     const fileUrl = await uploadToS3(stringifiedExpenses, filename);
+    const report = await ExpenseReport.create({
+      userId: userId,
+      name: filename,
+      url: fileUrl,
+      type: type
+    });
     res.status(200).json({
-      fileUrl,
+      message: "Expense report generated successfully",
+      fileUrl: fileUrl,
+      report: report
     });
 
   }catch(error){
@@ -162,3 +169,18 @@ export const downloadExpenseReport = async (req, res) =>{
     });
   }
 }
+
+
+export const getExpenseReports = async (req, res) => {
+  try{
+    const report  = await ExpenseReport.findAll({where: {userId: req.user.id}});
+    res.status(200).json({
+      message: "Expense report generated successfully",
+      report
+    });
+  }catch(error){
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};

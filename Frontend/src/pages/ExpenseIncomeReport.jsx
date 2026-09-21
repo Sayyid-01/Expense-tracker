@@ -9,7 +9,8 @@ const ExpenseIncomeReport = () => {
     const [filteredExpenses, setFilteredExpenses] = useState([]);
     const [type, setType] = useState("daily");
     const [totalExpense, setTotalExpense] = useState(0);
-
+    const [showHistory, setShowHistory] = useState(false);
+    const [reportHistory, setReportHistory] = useState([]);
     useEffect(() => {
         const fetchExpenses = async () => {
             try {
@@ -53,9 +54,9 @@ const ExpenseIncomeReport = () => {
         setTotalExpense(totalExpense);
     }, [type, expenses]);
 
-    const downloadExpenseReport = async() => {
+    const downloadExpenseReport = async () => {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/expenses/download`, 
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/expenses/download`,
             {
                 params: {
                     expenses: JSON.stringify(filteredExpenses),
@@ -70,8 +71,23 @@ const ExpenseIncomeReport = () => {
         window.open(res.data.fileUrl, "_blank");
     }
 
+    const getReportHistory= async()=>{
+        const token = sessionStorage.getItem("token");
+        const res= await axios.get(`${import.meta.env.VITE_BACKEND_API}/expenses/reports-history`,
+            {
+                headers: {
+                    "Content-Type": "application/JSON",
+                    "Authorization": `Bearer ${token}`,
+                },
+            }
+        )
+        setReportHistory(res.data)
+        setShowHistory(true);
+    }
+
 
     return (
+        <>
         <div className="w-2/3 mx-auto mt-20 p-8 border rounded shadow bg-gray-50">
             <h2 className="text-2xl font-bold text-center mb-6">
                 Expense Report
@@ -150,8 +166,42 @@ const ExpenseIncomeReport = () => {
             <div className="flex justify-center mt-6">
                 <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={() => downloadExpenseReport()}>Download Report</button>
             </div>
-        </div>
 
+
+            {/* ========== Download Report History ========== */}
+
+
+            
+        </div>   
+        <div className="mt-10 w-2/3 mx-auto">
+                <button onClick={() => getReportHistory()} className="border m-2 p-2 rounded bg-blue-500 text-white hover:bg-blue-600 ">Check Report History</button>
+
+                {showHistory && (
+                    <div className="mt-4 bg-white rounded-lg shadow-md p-5 border">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-semibold">Report History</h3>
+                            <span className="text-sm text-gray-500">{reportHistory.report.length} Reports</span>
+                        </div>
+
+                        {reportHistory.report.length === 0 ? (
+                            <p className="text-gray-500 text-center">No reports found.</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {reportHistory.report.map((report) => (
+                                    <div key={report.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg border">
+                                        <div>
+                                            <p className="font-medium">{report.name}</p>
+                                            <p className="text-sm text-gray-500">{report.type} Report</p>
+                                        </div>
+                                        <a href={report.url} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">View Report</a>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div> 
+            </>
     );
 };
 
