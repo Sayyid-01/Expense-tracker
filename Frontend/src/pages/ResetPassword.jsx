@@ -1,4 +1,4 @@
-import {useState, useEffect, React} from "react";
+import { useState, useEffect, React } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
@@ -27,27 +27,77 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="reset-password-container flex justify-center align-center flex-col gap-4 w-1/3 mx-auto mt-20 p-8 border rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Reset Password</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 justify-center align-center w-full">
-        <Input
-          type="password"
-          placeholder="New Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Input
-          type="password"
-          placeholder="Confirm New Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        {error && <p className="error">{error}</p>}
-        <Button type="submit" text="Reset Password"></Button>
-      </form>
-      <p className="text-sm text-gray-500">
-        Remember your password? <Link to="/login" className="text-blue-500 hover:underline">Login here</Link>
-      </p>
+    <div className="min-h-screen bg-[#fafafa] px-6 lg:px-12">
+      <div className="mx-auto flex min-h-screen max-w-6xl items-center justify-center">
+        <div className="w-full max-w-md">
+          <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-lg">
+            <div className="mb-6">
+              <p className="text-xs font-bold tracking-[0.2em] text-gray-400">
+                ACCOUNT
+              </p>
+              <h2 className="mt-1 font-serif text-3xl font-semibold">
+                Reset Password
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Create a new password for your account.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-semibold">
+                  New Password
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Enter new password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-semibold">
+                  Confirm Password
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+
+              {error && (
+                <p className="text-center text-sm font-medium text-red-500">
+                  {error}
+                </p>
+              )}
+
+              <Button
+                type="submit"
+                text="Reset Password"
+              />
+            </form>
+
+            <div className="my-6 flex items-center gap-3">
+              <div className="h-px flex-1 bg-gray-200" />
+              <span className="text-xs text-gray-400">Remembered it?</span>
+              <div className="h-px flex-1 bg-gray-200" />
+            </div>
+
+            <p className="text-center text-sm text-gray-500">
+              Remember your password?{" "}
+              <Link
+                to="/login"
+                className="font-semibold text-black hover:underline"
+              >
+                Login here
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

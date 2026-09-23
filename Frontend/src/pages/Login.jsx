@@ -6,6 +6,8 @@ import { login } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import ForgotPassword from "../components/ForgotPassword";
 import axios from "axios";
+import GridBackground from "../components/GridBackground";
+
 
 const Login = () => {
     const [form, setForm] = useState({
@@ -41,40 +43,122 @@ const Login = () => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-100">
-            <div className="w-100 rounded-2xl bg-white p-8 shadow-xl">
+        <>
 
-                <h1 className="mb-6 text-center text-3xl font-bold">
-                    Login
-                </h1>
-
-                <form onSubmit={handleSubmit} className="space-y-5">
-                    <Input label="Email" name="email" type="email" placeholder="Enter your email" value={form.email} onChange={handleChange} />
-                    <Input label="Password" name="password" type="password" placeholder="Enter your password" value={form.password} onChange={handleChange} />
-                    {message && (
-                        <p className="text-center text-red-500 font-medium">
-                            {message}
-                        </p>
-                    )}
-                    <Button text="Login" />
-                </form>
-
-                <p className="mt-5 text-center">
-                    Don't have an account?{" "}
-                    <Link to="/signup" className="text-blue-600 font-semibold" >
-                        Signup
-                    </Link>
-                </p>
-                <button type="button" onClick={() => setShowForgotPassword(true)} className="text-sm w-full cursor-pointer text-blue-600 hover:underline pointer mt-2 justify-center flex">
-                    Forgot Password?
-                </button>
-
-            </div>
-            <div className="flex items-center justify-center">{showForgotPassword && ( <ForgotPassword onClose={() => setShowForgotPassword(false)}/>)}</div>
+        <div className="min-h-screen bg-[#fafafa] px-6 lg:px-12">
             
-        </div>
+            <GridBackground>
+            <div className="mx-auto flex min-h-screen max-w-6xl items-center gap-12">
 
+                {/* Left side */}
+                <div className="hidden flex-1 lg:block">
+                    <div className="mb-10 flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-xs font-bold text-white">
+                            ET
+                        </div>
+                        <span className="font-serif text-2xl italic">Expense</span>
+                    </div>
+
+                    <p className="mb-4 text-xs font-bold tracking-[0.3em]">WELCOME BACK</p>
+
+                    <h1 className="font-serif text-5xl leading-tight">
+                        Back to your
+                        <br />
+                        finances.
+                    </h1>
+
+                    <p className="mt-5 max-w-lg text-base text-gray-500">
+                        Continue tracking, organizing, and managing your expenses where you left off.
+                    </p>
+
+                    <div className="mt-7 flex gap-3">
+                        <div className="h-36 w-64 overflow-hidden rounded-xl bg-gray-200">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtlvaNKi6092OMqVQOne1BJZgAsKiVefUFwSoMfFez52pQy0qxnFswtY0&s=10" alt="" className="h-full w-full object-cover grayscale" />
+                        </div>
+                        <div className="h-36 w-64 overflow-hidden rounded-xl bg-gray-200">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvI69nUzmLHAqXyTZqjICH1C18ESd-Opd14scxvigOvzzRnGvzCMCqlHcJ&s=10" alt="" className="h-full w-full object-cover grayscale" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Login */}
+                <div className="w-full max-w-md">
+                    <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-lg">
+                        <h2 className="font-serif text-3xl font-semibold">Log in</h2>
+                        <p className="mt-1 text-sm text-gray-500">Continue managing your expenses.</p>
+
+                        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                            <div>
+                                <label className="mb-1.5 block text-sm font-semibold">Email</label>
+                                <input
+                                    name="email"
+                                    type="email"
+                                    placeholder="you@email.com"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm outline-none focus:border-gray-400 focus:bg-white"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="mb-1.5 block text-sm font-semibold">Password</label>
+                                <input
+                                    name="password"
+                                    type="password"
+                                    placeholder="Your password"
+                                    value={form.password}
+                                    onChange={handleChange}
+                                    className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm outline-none focus:border-gray-400 focus:bg-white"
+                                />
+                            </div>
+
+                            {message && (
+                                <p className="text-center text-sm font-medium text-red-500">
+                                    {message}
+                                </p>
+                            )}
+
+                            <div className="flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowForgotPassword(true)}
+                                    className="text-sm font-semibold hover:underline"
+                                >
+                                    Forgot password?
+                                </button>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="h-12 w-full rounded-xl bg-black text-sm font-semibold text-white hover:bg-gray-800"
+                            >
+                                Log in
+                            </button>
+                        </form>
+
+                        <div className="my-6 flex items-center gap-3">
+                            <div className="h-px flex-1 bg-gray-200" />
+                            <span className="text-xs text-gray-400">New here?</span>
+                            <div className="h-px flex-1 bg-gray-200" />
+                        </div>
+
+                        <p className="text-center text-sm text-gray-500">
+                            Don't have an account?{" "}
+                            <Link to="/signup" className="font-semibold text-black hover:underline">
+                                Create an account
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {showForgotPassword && (
+                <ForgotPassword onClose={() => setShowForgotPassword(false)} />
+            )}
+            </GridBackground>
+        </div>
         
+        </>
     );
 };
 

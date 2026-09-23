@@ -71,9 +71,9 @@ const ExpenseIncomeReport = () => {
         window.open(res.data.fileUrl, "_blank");
     }
 
-    const getReportHistory= async()=>{
+    const getReportHistory = async () => {
         const token = sessionStorage.getItem("token");
-        const res= await axios.get(`${import.meta.env.VITE_BACKEND_API}/expenses/reports-history`,
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/expenses/reports-history`,
             {
                 headers: {
                     "Content-Type": "application/JSON",
@@ -88,120 +88,175 @@ const ExpenseIncomeReport = () => {
 
     return (
         <>
-        <div className="w-2/3 mx-auto mt-20 p-8 border rounded shadow bg-gray-50">
-            <h2 className="text-2xl font-bold text-center mb-6">
-                Expense Report
-            </h2>
+            <div className="min-h-screen bg-[#fafafa] px-6 py-8 lg:px-12">
+                <div className="mx-auto max-w-6xl">
 
-            <div className="flex justify-center gap-2 mb-6">
-                <button onClick={() => setType("daily")} className={`px-4 py-2 border rounded ${type === "daily" ? "bg-gray-400" : "bg-white"}`}>
-                    Daily
-                </button>
-
-                <button onClick={() => setType("weekly")} className={`px-4 py-2 border rounded ${type === "weekly" ? "bg-gray-400" : "bg-white"}`} >
-                    Weekly
-                </button>
-
-                <button onClick={() => setType("monthly")} className={`px-4 py-2 border rounded ${type === "monthly" ? "bg-gray-400" : "bg-white"}`}>
-                    Monthly
-                </button>
-            </div>
-
-            <p className="text-center text-gray-600 mb-4">
-                Showing {type} expenses
-            </p>
-
-            <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr className="bg-gray-400">
-                        <th className="border p-2">Date</th>
-                        <th className="border p-2">Description</th>
-                        <th className="border p-2">Category</th>
-                        <th className="border p-2">Amount</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {filteredExpenses.length > 0 ? (
-                        filteredExpenses.map((item) => (
-                            <tr key={item.id}>
-                                <td className="border p-2">
-                                    {new Date(item.createdAt).toLocaleDateString()}
-                                </td>
-                                <td className="border p-2">
-                                    {item.description}
-                                </td>
-                                <td className="border p-2">
-                                    {item.category}
-                                </td>
-                                <td className="border p-2 text-red-700">
-                                    ₹{item.amount.toLocaleString("en-IN")}
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="5" className="border p-4 text-center">
-                                No expenses found
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-
-                <tfoot>
-                    <tr>
-                        <td
-                            colSpan="3"
-                            className="border p-2 text-right font-bold"
-                        >
-                            Total Expense
-                        </td>
-                        <td className="border p-2 text-red-700 font-bold">
-                            ₹{totalExpense.toLocaleString("en-IN")}
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            <div className="flex justify-center mt-6">
-                <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={() => downloadExpenseReport()}>Download Report</button>
-            </div>
-
-
-            {/* ========== Download Report History ========== */}
-
-
-            
-        </div>   
-        <div className="mt-10 w-2/3 mx-auto">
-                <button onClick={() => getReportHistory()} className="border m-2 p-2 rounded bg-blue-500 text-white hover:bg-blue-600 ">Check Report History</button>
-
-                {showHistory && (
-                    <div className="mt-4 bg-white rounded-lg shadow-md p-5 border">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-semibold">Report History</h3>
-                            <span className="text-sm text-gray-500">{reportHistory.report.length} Reports</span>
+                    {/* Report */}
+                    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                        <div className="mb-6">
+                            <p className="text-xs font-bold tracking-[0.2em] text-gray-400">REPORTS</p>
+                            <h2 className="mt-1 font-serif text-3xl font-semibold">Expense Report</h2>
                         </div>
 
-                        {reportHistory.report.length === 0 ? (
-                            <p className="text-gray-500 text-center">No reports found.</p>
-                        ) : (
-                            <div className="space-y-3">
-                                {reportHistory.report.map((report) => (
-                                    <div key={report.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg border">
-                                        <div>
-                                            <p className="font-medium">{report.name}</p>
-                                            <p className="text-sm text-gray-500">{report.type} Report</p>
-                                        </div>
-                                        <a href={report.url} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">View Report</a>
+                        <div className="mb-5 flex justify-center gap-2">
+                            <button
+                                onClick={() => setType("daily")}
+                                className={`rounded-xl border px-4 py-2 text-sm font-medium ${type === "daily"
+                                        ? "border-black bg-black text-white"
+                                        : "border-gray-200 bg-white hover:bg-gray-50"
+                                    }`}
+                            >
+                                Daily
+                            </button>
+
+                            <button
+                                onClick={() => setType("weekly")}
+                                className={`rounded-xl border px-4 py-2 text-sm font-medium ${type === "weekly"
+                                        ? "border-black bg-black text-white"
+                                        : "border-gray-200 bg-white hover:bg-gray-50"
+                                    }`}
+                            >
+                                Weekly
+                            </button>
+
+                            <button
+                                onClick={() => setType("monthly")}
+                                className={`rounded-xl border px-4 py-2 text-sm font-medium ${type === "monthly"
+                                        ? "border-black bg-black text-white"
+                                        : "border-gray-200 bg-white hover:bg-gray-50"
+                                    }`}
+                            >
+                                Monthly
+                            </button>
+                        </div>
+
+                        <p className="mb-5 text-center text-sm text-gray-500">
+                            Showing {type} expenses
+                        </p>
+
+                        <div className="overflow-hidden rounded-xl border border-gray-200">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="border-b border-gray-200 bg-gray-50 text-left">
+                                        <th className="px-4 py-3 font-semibold">Date</th>
+                                        <th className="px-4 py-3 font-semibold">Description</th>
+                                        <th className="px-4 py-3 font-semibold">Category</th>
+                                        <th className="px-4 py-3 font-semibold">Amount</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {filteredExpenses.length > 0 ? (
+                                        filteredExpenses.map((item) => (
+                                            <tr key={item.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                                                <td className="px-4 py-3">
+                                                    {new Date(item.createdAt).toLocaleDateString()}
+                                                </td>
+                                                <td className="px-4 py-3 text-gray-600">{item.description}</td>
+                                                <td className="px-4 py-3">
+                                                    <span className="rounded-full font-extrabold uppercase font-cursive px-3 py-1 text-xs">
+                                                        {item.category}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 font-semibold text-red-600">
+                                                    ₹{item.amount.toLocaleString("en-IN")}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4" className="px-4 py-8 text-center text-gray-400">
+                                                No expenses found
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+
+                                <tfoot>
+                                    <tr className="bg-gray-50">
+                                        <td colSpan="3" className="px-4 py-3 text-right font-semibold">
+                                            Total Expense
+                                        </td>
+                                        <td className="px-4 py-3 font-bold text-red-600">
+                                            ₹{totalExpense.toLocaleString("en-IN")}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div className="mt-6 flex justify-center">
+                            <button
+                                onClick={() => downloadExpenseReport()}
+                                className="rounded-xl bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800"
+                            >
+                                Download Report
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Report History */}
+                    <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-bold tracking-[0.2em] text-gray-400">HISTORY</p>
+                                <h3 className="mt-1 font-serif text-2xl font-semibold">Report History</h3>
+                            </div>
+
+                            <button
+                                onClick={() => getReportHistory()}
+                                className="rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+                            >
+                                Check History
+                            </button>
+                        </div>
+
+                        {showHistory && (
+                            <div className="mt-5">
+                                <div className="mb-4 flex items-center justify-between border-b border-gray-100 pb-3">
+                                    <p className="text-sm text-gray-500">Downloaded reports</p>
+                                    <span className="text-sm text-gray-500">
+                                        {reportHistory.report.length} Reports
+                                    </span>
+                                </div>
+
+                                {reportHistory.report.length === 0 ? (
+                                    <p className="py-6 text-center text-sm text-gray-400">
+                                        No reports found.
+                                    </p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {reportHistory.report.map((report) => (
+                                            <div
+                                                key={report.id}
+                                                className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4"
+                                            >
+                                                <div>
+                                                    <p className="font-medium text-gray-900">{report.name}</p>
+                                                    <p className="mt-1 text-sm text-gray-500">
+                                                        {report.type} Report
+                                                    </p>
+                                                </div>
+
+                                                <a
+                                                    href={report.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+                                                >
+                                                    View Report
+                                                </a>
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
+                                )}
                             </div>
                         )}
                     </div>
-                )}
-            </div> 
-            </>
+
+                </div>
+            </div>
+        </>
     );
 };
 
