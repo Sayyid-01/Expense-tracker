@@ -6,7 +6,7 @@ import { login } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import ForgotPassword from "../components/ForgotPassword";
 import axios from "axios";
-import GridBackground from "../components/GridBackground";
+
 
 
 const Login = () => {
@@ -45,9 +45,7 @@ const Login = () => {
     return (
         <>
 
-        <div className="min-h-screen bg-[#fafafa] px-6 lg:px-12">
-            
-            <GridBackground>
+        <div className="min-h-screen px-6 lg:px-12">
             <div className="mx-auto flex min-h-screen max-w-6xl items-center gap-12">
 
                 {/* Left side */}
@@ -155,7 +153,6 @@ const Login = () => {
             {showForgotPassword && (
                 <ForgotPassword onClose={() => setShowForgotPassword(false)} />
             )}
-            </GridBackground>
         </div>
         
         </>

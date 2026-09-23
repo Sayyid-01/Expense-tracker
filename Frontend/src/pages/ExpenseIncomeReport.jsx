@@ -88,7 +88,7 @@ const ExpenseIncomeReport = () => {
 
     return (
         <>
-            <div className="min-h-screen bg-[#fafafa] px-6 py-8 lg:px-12">
+            <div className="min-h-screen px-6 py-8 lg:px-12">
                 <div className="mx-auto max-w-6xl">
 
                     {/* Report */}

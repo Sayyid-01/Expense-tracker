@@ -6,8 +6,8 @@ const GridBackground = ({ children }) => {
         className="absolute inset-0"
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(0,0,0,0.12) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(0,0,0,0.12) 1px, transparent 1px)
+            linear-gradient(to right, rgba(0,0,0,0.03) 21px, transparent 1px),
+            linear-gradient(to bottom, rgba(0,0,0,0.01) px, transparent 1px)
           `,
           backgroundSize: "80px 80px",
         }}

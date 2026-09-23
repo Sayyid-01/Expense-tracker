@@ -41,7 +41,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] px-6 lg:px-8">
+    <div className="min-h-screen px-6 lg:px-8">
+  
       <div className="mx-auto flex min-h-screen max-w-6xl items-center gap-8">
 
         {/* Left side */}
