@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { sendForgotPasswordMail } from "../services/emailService.js";
 import ForgotPasswordRequest from "../models/ForgotPasswordRequest.js";
 
+
 export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -49,7 +50,6 @@ export const login = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 export const forgotPassword = async (req, res) => {
   try {

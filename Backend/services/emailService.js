@@ -21,9 +21,13 @@ export const sendForgotPasswordMail = async (email, resetLink) => {
                     email: email,
                 },
             ],
-            subject: "Password Reset Request",
-            textContent: `Your password reset request was received. Click the link to reset your password: ${resetLink}`
+            templateId: 2,
+            params: {
+                resetLink: resetLink
+            },
         };
+        console.log("Sending email to:", email);
+        console.log("Reset link:", resetLink);
         await apiInstance.sendTransacEmail(sendSmtpEmail);
         return true;
     } catch (error) {

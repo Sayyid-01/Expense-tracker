@@ -28,12 +28,14 @@ const Signup = () => {
     try {
       const result = await signup(form);
 
-      if (result.message) {
+      if (result.message === "Signup successful") {
         setMessage(result.message);
 
         setTimeout(() => {
           navigate("/");
         }, 1000);
+      }else {
+        setMessage(result.message || "Signup failed. Please try again.");
       }
     } catch (error) {
       setMessage("Unable to connect to the server.");

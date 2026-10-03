@@ -16,7 +16,7 @@ const ForgotPassword = ({ onClose }) => {
             setLoading(true);
             setMessage("");
             const response = await axios.post(
-                "${import.meta.env.VITE_BACKEND_API}/users/password/forgot_password",
+                `${import.meta.env.VITE_BACKEND_API}/users/password/forgot_password`,
                 { email }
             );
 

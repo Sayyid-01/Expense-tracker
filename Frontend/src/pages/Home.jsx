@@ -480,7 +480,7 @@ const Home = () => {
         </div>
 
         {/* Leaderboard */}
-        {showLeaderboard && (
+        {isPremium && showLeaderboard && (
           <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="mb-5">
               <p className="text-xs font-bold tracking-[0.2em] text-gray-400">PREMIUM</p>
