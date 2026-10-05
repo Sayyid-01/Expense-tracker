@@ -115,9 +115,7 @@ const Home = () => {
         amount: "",
         description: "",
         category: "Food",
-        note: "",
       });
-      handleLeaderboard();
     } catch (error) {
       console.error("Error on adding expense:", error);
     }
@@ -333,15 +331,6 @@ const Home = () => {
                 onChange={handleChange}
               />
 
-              <Input
-                label="Note"
-                name="note"
-                type="text"
-                placeholder="Enter note"
-                value={form.note}
-                onChange={handleChange}
-              />
-
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-gray-900">
                   Category
@@ -439,7 +428,7 @@ const Home = () => {
                     <th className="px-4 py-3 font-semibold">Amount</th>
                     <th className="px-4 py-3 font-semibold">Description</th>
                     <th className="px-4 py-3 font-semibold">Category</th>
-                    <th className="px-4 py-3 font-semibold">Note</th>
+                    <th className="px-4 py-3 font-semibold">Date</th>
                     <th className="px-4 py-3 text-center font-semibold">Action</th>
                   </tr>
                 </thead>
@@ -455,7 +444,11 @@ const Home = () => {
                             {expense.category}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-gray-500">{expense.note}</td>
+                        <td className="px-4 py-3 text-gray-500">{new Date(expense.createdAt).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}</td>
                         <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => handleDelete(expense.id)}
@@ -482,9 +475,18 @@ const Home = () => {
         {/* Leaderboard */}
         {isPremium && showLeaderboard && (
           <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="mb-5">
+            <div className="mb-5 flex items-center justify-between">
+              <div>
               <p className="text-xs font-bold tracking-[0.2em] text-gray-400">PREMIUM</p>
               <h2 className="mt-1 font-serif text-2xl font-semibold">Leaderboard</h2>
+
+              </div>
+              <button
+                onClick={() => setShowLeaderboard(false)}
+                className="mt-1 font-serif text-2xl font-semibold right-0 cursor-pointer text-gray-400 hover:text-gray-600"
+              >
+                ❌
+              </button>
             </div>
 
             <div className="overflow-hidden rounded-xl border border-gray-200">

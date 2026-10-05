@@ -233,10 +233,19 @@ const ExpenseIncomeReport = () => {
                                             >
                                                 <div>
                                                     <p className="font-medium text-gray-900">{report.name}</p>
+
                                                     <p className="mt-1 text-sm text-gray-500">
                                                         {report.type} Report
                                                     </p>
                                                 </div>
+
+                                                <p className="text-sm font-semibold text-gray-500">
+                                                    {new Date(report.createdAt).toLocaleDateString("en-GB", {
+                                                        day: "numeric",
+                                                        month: "short",
+                                                        year: "numeric",
+                                                    })}
+                                                </p>
 
                                                 <a
                                                     href={report.url}
