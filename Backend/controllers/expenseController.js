@@ -4,6 +4,7 @@ import { categorizeExpense } from "../services/aiServices.js";
 import sequelize from "../config/database.js";
 import AWS from "aws-sdk";
 import {ExpenseReport} from "../models/index1.js";
+import { JSON } from "sequelize";
 
 export const addExpense = async (req, res) => {
 
@@ -138,6 +139,7 @@ async function  uploadToS3(fileContent, filename) {
     Bucket: process.env.BUCKET_NAME,
     Key: filename,
     Body: fileContent,
+    ContentType: "text/csv",
     ACL: "public-read"
   };
   const s3res = await s3.upload(params).promise();
@@ -148,9 +150,43 @@ export const downloadExpenseReport = async (req, res) =>{
   try{
      const userId = req.user.id;
     const {expenses, type} = req.query;
-    const stringifiedExpenses = JSON.stringify(expenses);
-    const filename = `ExpenseReport${userId}${Date.now()}${type}.txt`;
-    const fileUrl = await uploadToS3(stringifiedExpenses, filename);
+
+    const expensesData = globalThis.JSON.parse(expenses);
+    if (!Array.isArray(expensesData)) {
+      return res.status(400).json({
+        error: "Invalid expenses data",
+      });
+    }
+
+
+      const headers = [
+      "ID",
+      "Date",
+      "Description",
+      "Category",
+      "Amount",
+    ];
+
+     // Convert expenses into CSV rows
+    const rows = expensesData.map((expense) => [
+      expense.id ?? "",
+      expense.createdAt
+        ? new Date(expense.createdAt).toLocaleDateString("en-IN")
+        : "",
+      `"${String(expense.description ?? "").replace(/"/g, '""')}"`,
+      `"${String(expense.category ?? "").replace(/"/g, '""')}"`,
+      expense.amount ?? 0,
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) => row.join(",")),
+    ].join("\n");
+
+    const filename = `ExpenseReport_${userId}_${Date.now()}_${type}.txt`;
+    const fileUrl = await uploadToS3(csvContent, filename);
+
     const report = await ExpenseReport.create({
       userId: userId,
       name: filename,

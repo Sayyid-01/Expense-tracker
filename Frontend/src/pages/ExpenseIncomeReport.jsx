@@ -63,7 +63,6 @@ const ExpenseIncomeReport = () => {
                     type: type
                 },
                 headers: {
-                    "Content-Type": "application/JSON",
                     "Authorization": `Bearer ${token}`,
                 },
             }
@@ -81,7 +80,7 @@ const ExpenseIncomeReport = () => {
                 },
             }
         )
-        setReportHistory(res.data)
+        setReportHistory(res.data);
         setShowHistory(true);
     }
 
